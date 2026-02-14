@@ -44,7 +44,7 @@ jobs:
                 echo "Message: ${{ github.event.inputs.message }}"
             # Perform actions based on the inputs
             - name: Run tests (if selected)
-              if: ${{ github.event.inputs.run_tests == true }}
+              if: ${{ github.event.inputs.run_tests == 'true' }}
               run: |
                 if [ "${{ github.event.inputs['test-type'] }}" == "unit" ]; then
                   echo "Running unit tests..."
