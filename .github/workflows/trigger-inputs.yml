@@ -1,0 +1,63 @@
+name: Triggered workflow with various inputs
+on:
+  workflow_dispatch:
+    inputs:
+      run_tests:
+        description: 'Run tests'
+        type: boolean
+        required: true
+        default: false
+      test-type:
+        description: 'Type of tests to run'
+        type: choice
+        required: true
+        options:
+          - unit
+          - integration
+          - all
+        default: all
+      environment:
+        description: 'Deployment environment'
+        type: choice
+        options:
+          - staging
+          - production
+      build-number:
+        description: 'Build number for tracking'
+        type: number
+        required: false
+      message:
+        description: 'Custom message for the workflow run'
+        type: string
+        required: false
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Display input values
+              run: |
+                echo "Run tests: ${{ github.event.inputs.run_tests }}"
+                echo "Test type: ${{ github.event.inputs.test-type }}"
+                echo "Environment: ${{ github.event.inputs.environment }}"
+                echo "Build number: ${{ github.event.inputs['build-number'] }}"
+                echo "Message: ${{ github.event.inputs.message }}"
+            # Perform actions based on the inputs
+            - name: Run tests (if selected)
+              if: ${{ github.event.inputs.run_tests == 'true' }}
+              run: |
+                if [ "${{ github.event.inputs['test-type'] }}" == "unit" ]; then
+                  echo "Running unit tests..."
+                  # Command to run unit tests
+                elif [ "${{ github.event.inputs['test-type'] }}" == "integration" ]; then
+                  echo "Running integration tests..."
+                  # Command to run integration tests
+                else
+                  echo "Running all tests..."
+                  # Command to run all tests
+            # Deploy to the selected environment
+            - name: Deploy to environment
+              if: ${{ github.event.inputs.environment }}
+              run: |
+                echo "Deploying to ${{ github.event.inputs.environment }} environment..."
+                # Command to deploy to the selected environment
